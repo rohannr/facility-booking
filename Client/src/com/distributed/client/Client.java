@@ -28,7 +28,6 @@ public class Client {
 		
 		BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
 		
-		
 		System.out.println("Welcome to the Facility Booking System!\n" +
 				"You can access the following services:\n" +
 				"[1] Check Availability of Facilities\n" +

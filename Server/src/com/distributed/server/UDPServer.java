@@ -18,8 +18,10 @@ public class UDPServer {
 	 */
 	public static void main(String[] args) throws IOException, ParseException {
 		
+		String facName;
+		Services services = Services.getServices();
+		services.init();
 		DatagramSocket sock = null;
-		SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy");
 		try {
 			sock = new DatagramSocket(6789);
 			byte[] buffer = new byte[1000];
@@ -27,20 +29,28 @@ public class UDPServer {
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
 				sock.receive(request);
 				String msg = new String(request.getData());
-				StringTokenizer tok = new StringTokenizer(msg);
-				int service = Integer.parseInt(tok.nextToken());
+				StringTokenizer tok = new StringTokenizer(msg, " -");
+				int servNum = Integer.parseInt(tok.nextToken());
 				
-				switch(service){
+				switch(servNum){
 
 				case 1: 
-					String facName = tok.nextToken();
-					Vector<Date> daysToCheck = new Vector<Date>();
+					facName = tok.nextToken();		
+					Vector<Integer> daysToCheck = new Vector<Integer>();
 					while(tok.hasMoreElements()){
-						daysToCheck.add((Date)df.parseObject(tok.nextToken()));
+						daysToCheck.add(BookingUtils.getDay(tok.nextToken()));
 					}
 					System.out.println(facName + " requested for " + daysToCheck);
-
-
+					services.displayAvailability(); //implement
+					break;
+				
+				case 2:
+					facName = tok.nextToken();
+					String dayOfWeek = tok.nextToken();
+					String startTime = tok.nextToken();
+					String endTime = tok.nextToken();
+					services.reserveFacility(); //implement
+					
 				default:
 					;
 				}
