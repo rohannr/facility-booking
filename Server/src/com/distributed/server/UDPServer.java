@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.UUID;
@@ -25,8 +26,8 @@ public class UDPServer {
 
 	public static void main(String[] args) throws IOException, ParseException {
 
-		boolean atMostOnce = args[0].equalsIgnoreCase("atm") ? true : false;
-		HashMap<String, String> requestHistory = null; //Table of Request IDs and their corresponding replies.
+		boolean atMostOnce = args[0].equalsIgnoreCase("atm") ? true : false;  //At most once Invocation semantics activated
+		HashMap<String, String> requestHistory = new HashMap<String, String>(); //Table of Request IDs and their corresponding replies.
 		String facName;
 		Services services = Services.getServices();
 		services.init();
@@ -47,6 +48,7 @@ public class UDPServer {
 				if(requestHistory != null && requestHistory.containsKey(reqID) && atMostOnce){
 					//No Need to execute message again. Simply resend the reply.
 					replyMsg.concat(requestHistory.get(reqID));
+					System.out.println("Duplicate Reply Filtered");
 				} else {
 					int servNum = Integer.parseInt(sc.next());
 					switch(servNum){
@@ -59,9 +61,10 @@ public class UDPServer {
 							int day = Integer.parseInt(token);
 							daysToCheck.add(token);
 						}
-						System.out.println(facName + " requested for " + daysToCheck);
 						replyMsg = "reqID: " + reqID + "\n" + facName + " requested for " + daysToCheck;
-						Services.displayAvailability(); //implement
+						System.out.println(replyMsg);
+						requestHistory.put(reqID, replyMsg);
+//						Services.getAvailability(null,null); //implement
 						break;
 
 					case 2:
@@ -78,7 +81,12 @@ public class UDPServer {
 				byte[] replyPacket = replyMsg.getBytes();
 
 				DatagramPacket reply = new DatagramPacket(replyPacket, replyPacket.length, request.getAddress(), request.getPort());
-				sock.send(reply);
+				Random rand = new Random();
+				
+				if(rand.nextInt(5) > 2){
+					System.out.println("Reply sent!");
+					sock.send(reply);
+				} 
 			}
 		}
 

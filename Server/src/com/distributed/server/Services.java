@@ -23,10 +23,10 @@ public class Services {
 			
 	}	
 	
-	
-
-	public static String displayAvailability() {
-		return null;
+	public static String getAvailability(int fac, Vector<Integer> days) {
+		//does not check out of range
+		Facility facility = ref.facList.get(fac);
+		return facility.parseAvailability(days) ;
 	}
 
 	public static int reserveFacility(int fac, int day, int startTime, int endTime){
@@ -34,6 +34,13 @@ public class Services {
 		Facility facility = ref.facList.get(fac);
 		return facility.book(fac, day, getSlot(startTime), getSlot(endTime));
 	}
+	
+	public static String updateBooking(int confID, String offset){
+		// does not validate offset
+//		confID
+		return "";
+	}
+	
 	
 	public static int getSlot(int hhmm) {
 		String time = Integer.toString(hhmm);
