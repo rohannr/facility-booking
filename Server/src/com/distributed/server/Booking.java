@@ -1,64 +1,42 @@
 package com.distributed.server;
 
-import java.sql.Time;
-
 public class Booking {
 
+	private static int idCounter = 0; 
 	private int startSlot;
 	private int endSlot;
-	private Time startTime;
-	private Time endTime;
-	
-	private int UID;
-	
-	public static boolean conflicts(Booking b1, Booking b2){
-		return false;
-	}
-	
-	public Booking(Time start, Time end){
-		this.startTime = start;
-		this.endTime = end;
-	}
+	private int ID;
 
-	public int getStartSlot() {
-		return startSlot;
+	public Booking(int fId, int start, int end){
+		this.startSlot = start;
+		this.endSlot = end;
+		String join = "" + fId + idCounter;
+		this.ID = Integer.parseInt(join);
+		idCounter++;
 	}
 
 	public void setStartSlot(int startSlot) {
 		this.startSlot = startSlot;
 	}
 
-	public int getEndSlot() {
-		return endSlot;
-	}
-
 	public void setEndSlot(int endSlot) {
 		this.endSlot = endSlot;
 	}
 
-	public Time getStartTime() {
-		return startTime;
+	public int getID() {
+		return ID;
 	}
 
-	public void setStartTime(Time startTime) {
-		this.startTime = startTime;
+	public boolean conflict(int start, int end) {
+		if (start >= this.startSlot && end <= this.endSlot){
+			return true;
+		} else if (start < this.startSlot && end > this.startSlot){
+			return true;
+		} else if (start < this.endSlot && end >= this.endSlot){
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	public Time getEndTime() {
-		return endTime;
-	}
-
-	public void setEndTime(Time endTime) {
-		this.endTime = endTime;
-	}
-
-	public int getUID() {
-		return UID;
-	}
-
-	public void setUID(int uID) {
-		UID = uID;
-	}
-
-	
 }

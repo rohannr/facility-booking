@@ -7,7 +7,11 @@ public class BookingUtils {
 	private BookingUtils(){
 		;
 	}
-	
+	/**
+	 * Returns number corresponding to the day of the week
+	 * @param day
+	 * @return int
+	 */
 	public static int getDay(String day){
 		if(day.equalsIgnoreCase("Monday")){
 			return 0;
