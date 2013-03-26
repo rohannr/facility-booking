@@ -1,4 +1,4 @@
-Design and implement a distributed facility booking
+design and implement a distributed facility booking
 system based on client-server architecture. The server stores the information of all
 facilities (e.g., meeting rooms, lecture theatres), including the name of each facility (a
 variable-length string), the availability of the facility over seven days of a week (the
