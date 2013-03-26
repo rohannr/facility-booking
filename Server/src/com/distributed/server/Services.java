@@ -37,15 +37,22 @@ public class Services {
 	
 	public static String updateBooking(int confID, String offset){
 		// does not validate offset
-//		confID
+        String id = Integer.toStirng(confID);
+		int facID = Integer.parseInt(id.substring(0,1));
+        int day = Integer.parseIint(id.substring(1,2));
+        Facility facility = ref.facList.get(facID);
+        
+        if (offset.length() == 4) {
+        
+        facility.updateBooking(day, confID);
 		return "";
-	}
+	}   
 	
 	
 	public static int getSlot(int hhmm) {
 		String time = Integer.toString(hhmm);
 		
-		String hh = time.substring(0, 1);
+		String hh = time.substring(0, 2);
 		int hr = Integer.parseInt(hh);
 		
 		if (time.endsWith("00")) {

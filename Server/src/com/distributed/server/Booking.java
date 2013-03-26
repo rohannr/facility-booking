@@ -7,10 +7,10 @@
 		private int endSlot;
 		private int ID;
 	
-		public Booking(int fId, int start, int end){
+		public Booking(int fId, int day, int start, int end){
 			this.startSlot = start;
 			this.endSlot = end;
-			String join = "" + fId + idCounter;
+			String join = "" + fId + day + idCounter;
 			this.ID = Integer.parseInt(join);
 			idCounter++;
 		}
