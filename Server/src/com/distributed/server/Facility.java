@@ -9,6 +9,10 @@ public class Facility {
 
 	public Facility(String name) {
 		this.name = name;
+		daySchedule = new Vector<Vector<Booking>>();
+		for (Vector<Booking> day : daySchedule){
+			day = new Vector<Booking>();
+		}
 	}
 
 	public String getName() {

@@ -66,18 +66,24 @@ public class UDPServer {
 							daysToCheck.add(day);
 						}
 						replyMsg = "reqID: " + reqID + "\n" + facID + " requested for " + daysToCheck;
-						System.out.println(Services.getAvailability(facID, daysToCheck));
+						System.out.println(services.getAvailability(facID, daysToCheck));
 						requestHistory.put(reqID, replyMsg);
 						//						Services.getAvailability(null,null); //implement
 						break;
 
 					case 2:
-						//						int facId = Integer.parseInt(sc.next());
-						//						int dayOfWeek = Integer.parseInt(sc.next());
-						//						String startTime = sc.next();
-						//						String endTime = sc.next();
-						//						services.reserveFacility(facId, dayOfWeek, startTime, endTime); //implement
-
+						int facId = Integer.parseInt(sc.next());
+						int dayOfWeek = Integer.parseInt(sc.next());
+						String startTime = sc.next();
+						String endTime = sc.next();
+						replyMsg = Integer.toString(services.reserveFacility(facId, dayOfWeek, startTime, endTime)); 
+						break;
+						
+					case 3:
+						int confID = Integer.parseInt(sc.next());
+						String offset = sc.next();
+						replyMsg = services.updateBooking(confID, offset);
+						break;
 					default:
 						;
 					}
