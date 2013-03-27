@@ -34,19 +34,19 @@ public class BookingUtils {
     
     public static String getString(int day){
         if (day == 0){
-            return "Monday";
+            return "Monday   ";
         } else if (day == 1) {
-            return "Tuesday";
+            return "Tuesday  ";
         } else if (day == 2) {
             return "Wednesday";
         } else if (day == 3) {
-            return "Thursday";
+            return "Thursday ";
         } else if (day == 4) {
-            return "Friday";
+            return "Friday   ";
         } else if (day == 5) {
-            return "Saturday";
+            return "Saturday ";
         } else if (day == 6) {
-            return "Sunday";
+            return "Sunday   ";
         } else {
             return "invalid";
         }

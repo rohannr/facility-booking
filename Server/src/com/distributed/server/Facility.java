@@ -81,7 +81,7 @@ public class Facility {
 			 Integer[] span = getAvailability(days.get(i));
 			 
 			 if (span.length >= 2) {
-				 result += "avilability for day " + days.get(i) + " are: ";
+				 result += BookingUtils.getString(days.get(i)) + ": ";
 				 if (span[0] != 0) { //starts with free period
 					 result += slotToTime(0) + "-" + slotToTime(span[0]) + "  ";
 				 }
