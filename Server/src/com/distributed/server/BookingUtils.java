@@ -1,9 +1,12 @@
 package com.distributed.server;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 public class BookingUtils {
 
@@ -68,6 +71,15 @@ public class BookingUtils {
 			today = today - 2;
 		}
 		return today;
+    }
+    
+    public static void notifyClient(String msg, InetAddress IP, int port) throws IOException{
+    	DatagramSocket soc = new DatagramSocket(9877);
+    	byte[] dataStream = new byte[2048];
+    	dataStream = msg.getBytes();
+    	DatagramPacket sendPacket = new DatagramPacket(dataStream, dataStream.length, IP, port);
+        soc.send(sendPacket);
+        soc.close();
     }
     
 	public static int getFacID(String faculty){

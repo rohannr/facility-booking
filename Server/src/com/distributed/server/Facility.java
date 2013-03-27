@@ -1,16 +1,20 @@
 package com.distributed.server;
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.util.*;
 
 public class Facility {
 
 	private String name;
 	private Vector<Vector<Booking>> daySchedule;
+	private Vector<Monitor> monitors = new Vector<Monitor>();
 
 	public Facility(String name) {
 		this.name = name;
 		daySchedule = new Vector<Vector<Booking>>();
 		for (Vector<Booking> day : daySchedule){
+			// you didn't commit your change to add day to vector
 			day = new Vector<Booking>();
 		}
 	}
@@ -19,7 +23,7 @@ public class Facility {
 		return name;
 	}
 
-	public String book(int facId, int day, int start, int end) {
+	public String book(int facId, int day, int start, int end) throws IOException {
 		Vector<Booking> bookings = this.daySchedule.get(day);
 		for(int i=0; i< bookings.size(); i++){
 			if (bookings.get(i).conflict(start, end)) {
@@ -28,6 +32,7 @@ public class Facility {
 	    }
 		Booking booking = new Booking(facId, day, start, end);
 		bookings.add(booking);
+		triggerMonitors();
 		return Integer.toString(booking.getID());
 	}
 		
@@ -43,7 +48,7 @@ public class Facility {
 		return span;
 	}
 	
-	public String updateBooking(int day, int confID, int slotOffset) {
+	public String updateBooking(int day, int confID, int slotOffset) throws IOException {
 		Vector<Booking> bookings = this.daySchedule.get(day);
 		
 		Booking update = null;
@@ -75,6 +80,7 @@ public class Facility {
 		//proceed with update
 		update.setStartSlot(newStart);
 		update.setEndSlot(newEnd);
+		triggerMonitors();
 		return "Booking " + confID + " updated to " + slotToTime(newStart) + "-" + slotToTime(newEnd);		
 	}
 
@@ -113,6 +119,38 @@ public class Facility {
 			return String.format("%02d", hh) + "30";
 		}
 	}
+
+	public void monitor(String interval, InetAddress IP, int port) {
+		Calendar calendar = Calendar.getInstance();
+		long millis = calendar.getTimeInMillis();
+		
+		long days = 86400000 * Integer.parseInt(interval.substring(0,1));
+		long hours = 3600000 * Integer.parseInt(interval.substring(1,3));
+		
+		long expiry = millis + days + hours;
+				
+		this.monitors.add(new Monitor(expiry, IP, port));
+	}
+	
+	public void triggerMonitors() throws IOException{
+		int today = BookingUtils.getToday();
+		Vector<Integer> days = new Vector<Integer>();
+		for (int i=today;i<7;i++){
+			days.add(i);
+		}
+		
+		String msg = parseAvailability(days);
+		Iterator<Monitor> itr = this.monitors.iterator();
+		while(itr.hasNext()){
+			Monitor m = itr.next();
+			if (m.expired()){
+				itr.remove();
+			} else {
+				BookingUtils.notifyClient(msg, m.IP, m.port);
+			}
+		}
+	}
+
 
 
 }

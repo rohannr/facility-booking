@@ -1,5 +1,7 @@
 package com.distributed.server;
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.util.*;
 
 public class Services {
@@ -29,7 +31,7 @@ public class Services {
 		return facility.parseAvailability(days) ;
 	}
 
-	public String reserveFacility(int fac, int day, String startTime, String endTime){
+	public String reserveFacility(int fac, int day, String startTime, String endTime) throws IOException{
 		int today = BookingUtils.getToday();
 		if (day < today){
 			return "Booking unsuccessful, " + BookingUtils.getString(today) + " has already past for this week.";
@@ -42,7 +44,13 @@ public class Services {
 		return facility.book(fac, day, getSlot(startTime), getSlot(endTime));
 	}
 	
-	public String updateBooking(int confID, String offset){
+	public void monitorFacility(int fac, String interval, InetAddress IP, int port){
+		Facility facility = ref.facList.get(fac);
+		facility.monitor(interval, IP, port);
+	}
+	
+	
+	public String updateBooking(int confID, String offset) throws IOException{
 		// does not validate offset
         String id = Integer.toString(confID);
 		int facID = Integer.parseInt(id.substring(0,1));
