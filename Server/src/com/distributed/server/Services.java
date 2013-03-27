@@ -5,6 +5,7 @@ import java.util.*;
 public class Services {
 
 	private Vector<Facility> facList = new Vector<Facility>();
+	private static final String[] facilityNames= new String[]{ "LT1", "LT2", "LT3", "LT3", "LT4", "LT5", "LT6", "LT7", "LT8", "LT8", "LT9", "LT10", "TR1", "TR2", "TR3", "TR4", "TR5", "SQ1", "SQ2", "TENNIS1", "TENNIS2", "TENNIS3" };
 	private static Services ref = new Services();
 
 	private Services(){
@@ -17,10 +18,9 @@ public class Services {
 
 	public void init(){
 		//initialize List of Facilities
-		ref.facList.add(new Facility("LEC1"));
-		ref.facList.add(new Facility("LEC2"));
-		ref.facList.add(new Facility("LEC3"));
-			
+		for (String name : facilityNames){
+			ref.facList.add(new Facility(name));
+		}
 	}	
 	
 	public static String getAvailability(int fac, Vector<Integer> days) {

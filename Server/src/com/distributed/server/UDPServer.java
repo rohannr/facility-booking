@@ -28,7 +28,7 @@ public class UDPServer {
 
 		boolean atMostOnce = args[0].equalsIgnoreCase("atm") ? true : false;  //At most once Invocation semantics activated
 		HashMap<String, String> requestHistory = new HashMap<String, String>(); //Table of Request IDs and their corresponding replies.
-		String facName;
+		int facID;
 		Services services = Services.getServices();
 		services.init();
 		DatagramSocket sock = null;
@@ -47,46 +47,54 @@ public class UDPServer {
 
 				if(requestHistory != null && requestHistory.containsKey(reqID) && atMostOnce){
 					//No Need to execute message again. Simply resend the reply.
-					replyMsg.concat(requestHistory.get(reqID));
-					System.out.println("Duplicate Reply Filtered");
+					replyMsg = requestHistory.get(reqID);
+					System.out.println("Duplicate Reply Filtered: " + requestHistory.get(reqID));
+					byte[] replyPacket = replyMsg.getBytes();
+					DatagramPacket reply = new DatagramPacket(replyPacket, replyPacket.length, request.getAddress(), request.getPort());
+					sock.send(reply);
+					System.out.println("Reply sent!");
 				} else {
 					int servNum = Integer.parseInt(sc.next());
 					switch(servNum){
 
 					case 1: 
-						facName = sc.next();		
-						Vector<Object> daysToCheck = new Vector<Object>();
+						facID = Integer.parseInt(sc.next());	
+						Vector<Integer> daysToCheck = new Vector<Integer>();
 						while(sc.hasNext()){
 							String token = sc.next();
 							int day = Integer.parseInt(token);
-							daysToCheck.add(token);
+							daysToCheck.add(day);
 						}
-						replyMsg = "reqID: " + reqID + "\n" + facName + " requested for " + daysToCheck;
-						System.out.println(replyMsg);
+						replyMsg = "reqID: " + reqID + "\n" + facID + " requested for " + daysToCheck;
+						System.out.println(Services.getAvailability(facID, daysToCheck));
 						requestHistory.put(reqID, replyMsg);
-//						Services.getAvailability(null,null); //implement
+						//						Services.getAvailability(null,null); //implement
 						break;
 
 					case 2:
-//						int facId = Integer.parseInt(sc.next());
-//						int dayOfWeek = Integer.parseInt(sc.next());
-//						int startTime = Integer.parseInt(sc.next());
-//						int endTime = Integer.parseInt(sc.next());
-//						services.reserveFacility(facId, dayOfWeek, startTime, endTime); //implement
+						//						int facId = Integer.parseInt(sc.next());
+						//						int dayOfWeek = Integer.parseInt(sc.next());
+						//						String startTime = sc.next();
+						//						String endTime = sc.next();
+						//						services.reserveFacility(facId, dayOfWeek, startTime, endTime); //implement
 
 					default:
 						;
 					}
-				}
-				byte[] replyPacket = replyMsg.getBytes();
 
-				DatagramPacket reply = new DatagramPacket(replyPacket, replyPacket.length, request.getAddress(), request.getPort());
-				Random rand = new Random();
-				
-				if(rand.nextInt(5) > 2){
-					System.out.println("Reply sent!");
-					sock.send(reply);
-				} 
+					byte[] replyPacket = replyMsg.getBytes();
+
+					DatagramPacket reply = new DatagramPacket(replyPacket, replyPacket.length, request.getAddress(), request.getPort());
+					Random rand = new Random();
+
+					if(rand.nextInt(5) > 2){
+						System.out.println("Reply sent!");
+						sock.send(reply);
+					} else {
+						System.out.println("Message Lost");
+					}
+					
+				}
 			}
 		}
 
