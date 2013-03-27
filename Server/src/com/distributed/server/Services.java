@@ -29,7 +29,14 @@ public class Services {
 		return facility.parseAvailability(days) ;
 	}
 
-	public int reserveFacility(int fac, int day, String startTime, String endTime){
+	public String reserveFacility(int fac, int day, String startTime, String endTime){
+		int today = BookingUtils.getToday();
+		if (day < today){
+			return "Booking unsuccessful, " + BookingUtils.getString(today) + " has already past for this week.";
+		} else if (today > 6) {
+			return "Booking unsuccessful, you can only make bookings for this week";
+		}
+		
 		//does not check out of range
 		Facility facility = ref.facList.get(fac);
 		return facility.book(fac, day, getSlot(startTime), getSlot(endTime));

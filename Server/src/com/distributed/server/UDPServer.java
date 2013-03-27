@@ -76,7 +76,7 @@ public class UDPServer {
 						int dayOfWeek = Integer.parseInt(sc.next());
 						String startTime = sc.next();
 						String endTime = sc.next();
-						replyMsg = Integer.toString(services.reserveFacility(facId, dayOfWeek, startTime, endTime)); 
+						replyMsg = services.reserveFacility(facId, dayOfWeek, startTime, endTime); 
 						break;
 						
 					case 3:

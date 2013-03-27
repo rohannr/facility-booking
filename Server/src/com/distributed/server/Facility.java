@@ -19,16 +19,16 @@ public class Facility {
 		return name;
 	}
 
-	public int book(int facId, int day, int start, int end) {
+	public String book(int facId, int day, int start, int end) {
 		Vector<Booking> bookings = this.daySchedule.get(day);
 		for(int i=0; i< bookings.size(); i++){
 			if (bookings.get(i).conflict(start, end)) {
-				return 0;
+				return "Booking unsuccessful due to time conflict.";
 			}
 	    }
 		Booking booking = new Booking(facId, day, start, end);
 		bookings.add(booking);
-		return booking.getID();
+		return Integer.toString(booking.getID());
 	}
 		
 	public Integer[] getAvailability(int day){
@@ -113,7 +113,6 @@ public class Facility {
 			return String.format("%02d", hh) + "30";
 		}
 	}
-
 
 
 }

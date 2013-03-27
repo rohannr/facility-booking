@@ -1,6 +1,7 @@
 package com.distributed.server;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +58,18 @@ public class BookingUtils {
             return "invalid";
         }
     }
-        	
+	
+    public static int getToday() {
+		Calendar calendar = Calendar.getInstance();
+		int today = calendar.get(Calendar.DAY_OF_WEEK);
+		if (today == 1) { //adjust to our week enumeration
+			today = 6;
+		} else {
+			today = today - 2;
+		}
+		return today;
+    }
+    
 	public static int getFacID(String faculty){
 		return facList.indexOf(faculty.toUpperCase());
 	}
