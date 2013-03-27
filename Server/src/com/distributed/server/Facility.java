@@ -22,7 +22,7 @@ public class Facility {
 				return 0;
 			}
 	    }
-		Booking booking = new Booking(facId, start, end);
+		Booking booking = new Booking(facId, day, start, end);
 		bookings.add(booking);
 		return booking.getID();
 	}
@@ -37,6 +37,41 @@ public class Facility {
 		Integer[] span = (Integer[]) slots.toArray(new Integer[0]);
 		Arrays.sort(span);
 		return span;
+	}
+	
+	public String updateBooking(int day, int confID, int slotOffset) {
+		Vector<Booking> bookings = this.daySchedule.get(day);
+		
+		Booking update = null;
+		for(int i=0; i< bookings.size(); i++){
+			if (bookings.get(i).getID() == confID){
+				update = bookings.get(i);
+				i = bookings.size();
+			}
+		}
+		
+		if (update == null){
+			return "Invalid booking ID provided.";
+		}
+		int newStart = slotOffset + update.getStartSlot();
+		int newEnd = slotOffset + update.getEndSlot();
+		
+		if (newStart < 0 || newEnd > 47){
+			return "Invalid offset provided. New booking must remain on same day.";
+		}
+		
+		for (int j=0; j<bookings.size();j++){
+			if (bookings.get(j).getID() != confID){
+				if (bookings.get(j).conflict(newStart, newEnd)){
+					return "Invalid offset provided. Conflict with another booking.";
+				}
+			}
+		}
+		
+		//proceed with update
+		update.setStartSlot(newStart);
+		update.setEndSlot(newEnd);
+		return "Booking " + confID + " updated to " + slotToTime(newStart) + "-" + slotToTime(newEnd);		
 	}
 
 	public String parseAvailability(Vector<Integer> days) {
@@ -74,6 +109,7 @@ public class Facility {
 			return String.format("%02d", hh) + "30";
 		}
 	}
+
 
 
 }

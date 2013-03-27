@@ -46,9 +46,9 @@ public class BookingUtils {
         } else if (day == 5) {
             return "Saturday";
         } else if (day == 6) {
-            return "Sunday":
+            return "Sunday";
         } else {
-            return "invalid"
+            return "invalid";
         }
     }
         

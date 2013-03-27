@@ -29,7 +29,7 @@ public class Services {
 		return facility.parseAvailability(days) ;
 	}
 
-	public static int reserveFacility(int fac, int day, int startTime, int endTime){
+	public static int reserveFacility(int fac, int day, String startTime, String endTime){
 		//does not check out of range
 		Facility facility = ref.facList.get(fac);
 		return facility.book(fac, day, getSlot(startTime), getSlot(endTime));
@@ -37,25 +37,28 @@ public class Services {
 	
 	public static String updateBooking(int confID, String offset){
 		// does not validate offset
-        String id = Integer.toStirng(confID);
+        String id = Integer.toString(confID);
 		int facID = Integer.parseInt(id.substring(0,1));
-        int day = Integer.parseIint(id.substring(1,2));
+        int day = Integer.parseInt(id.substring(1,2));
         Facility facility = ref.facList.get(facID);
         
+        int slotOffset;
         if (offset.length() == 4) {
+            slotOffset = getSlot(offset);
+        } else {
+            slotOffset = getSlot(offset.substring(1));
+            slotOffset *= -1;
+        }
         
-        facility.updateBooking(day, confID);
-		return "";
+        return facility.updateBooking(day, confID, slotOffset);
 	}   
 	
 	
-	public static int getSlot(int hhmm) {
-		String time = Integer.toString(hhmm);
-		
-		String hh = time.substring(0, 2);
+	public static int getSlot(String hhmm) {		
+		String hh = hhmm.substring(0, 2);
 		int hr = Integer.parseInt(hh);
 		
-		if (time.endsWith("00")) {
+		if (hhmm.endsWith("00")) {
 			return 2 * hr;
 		} else {
 			return 2 * hr + 1;
