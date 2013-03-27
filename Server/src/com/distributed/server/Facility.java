@@ -97,7 +97,7 @@ public class Facility {
 					 tail = span[j+1]; //valid cuz they should come in pairs
 				 }
 			 } else {
-				 result += "No bookings yet for day " + days.get(i);
+				 result += "No bookings yet for " + BookingUtils.getString(days.get(i));
 			 }
 			 result += "\n";
 		}
