@@ -69,7 +69,6 @@ public class UDPServer {
 							daysToCheck.add(day);
 						}
 						replyMsg = services.getAvailability(facID, daysToCheck);
-						requestHistory.put(reqID, replyMsg);
 						break;
 
 					case 2:
@@ -96,6 +95,9 @@ public class UDPServer {
 						;
 					}
 
+					if(atMostOnce)
+						requestHistory.put(reqID, replyMsg);      //Update request history so as not to re-execute requests
+					
 					byte[] replyPacket = replyMsg.getBytes();
 
 					DatagramPacket reply = new DatagramPacket(replyPacket, replyPacket.length, request.getAddress(), request.getPort());
