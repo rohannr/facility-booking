@@ -34,6 +34,7 @@ public class Services {
 	public String reserveFacility(int fac, int day, String startTime, String endTime) throws IOException{
 		int today = BookingUtils.getToday();
 		if (day < today){
+			System.out.println("!!!!" + day + "<" + today);
 			return "Booking unsuccessful, " + BookingUtils.getString(day) + " has already past for this week.";
 		} else if (today > 6) {
 			return "Booking unsuccessful, you can only make bookings for this week";

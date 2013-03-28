@@ -27,7 +27,8 @@ public class Facility {
 		Vector<Booking> bookings = this.daySchedule.get(day);
 		for(int i=0; i< bookings.size(); i++){
 			if (bookings.get(i).conflict(start, end)) {
-				return "Booking unsuccessful due to time conflict.";
+				return "Booking unsuccessful due to time conflict with: Booking #" +
+						bookings.get(i).getID() + " " + slotToTime(bookings.get(i).getStartSlot()) + " " + slotToTime(bookings.get(i).getEndSlot());
 			}
 	    }
 		Booking booking = new Booking(facId, day, start, end);
@@ -91,17 +92,23 @@ public class Facility {
 			 Integer[] span = getAvailability(days.get(i));
 			 
 			 if (span.length >= 2) {
+				 int tail;
 				 result += BookingUtils.getString(days.get(i)) + ": ";
 				 if (span[0] != 0) { //starts with free period
-					 result += slotToTime(0) + "-" + slotToTime(span[0]) + "  ";
+					 result += slotToTime(0) + "-" + slotToTime(span[0]) + " ";
 				 }
-				 int tail = span[1];
+				 tail = span[1];
 				 for (int j=2; j<span.length; j+=2){
 					 if (span[j] != tail) {
-						 result += slotToTime(tail) + "-" + slotToTime(span[j]) + "  "; 
+						 result += slotToTime(tail) + "-" + slotToTime(span[j]) + " "; 
 					 }
 					 tail = span[j+1]; //valid cuz they should come in pairs
 				 }
+				 if (tail < 47) {
+					 result += slotToTime(tail) + "-" + slotToTime(47) + " "; 
+					 
+				 }
+				
 			 } else {
 				 result += "No bookings yet for " + BookingUtils.getString(days.get(i));
 			 }

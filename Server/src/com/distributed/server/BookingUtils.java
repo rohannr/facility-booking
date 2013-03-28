@@ -35,7 +35,7 @@ public class BookingUtils {
 			return 4;
 		} else if(day.equalsIgnoreCase("Saturday")){
 			return 5;
-		}else if(day.equalsIgnoreCase("Friday")){
+		}else if(day.equalsIgnoreCase("Sunday")){
 			return 6;
 		} else {
 			return -1;
