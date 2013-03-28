@@ -13,9 +13,9 @@ public class Facility {
 	public Facility(String name) {
 		this.name = name;
 		daySchedule = new Vector<Vector<Booking>>();
-		for (Vector<Booking> day : daySchedule){
-			// you didn't commit your change to add day to vector
-			day = new Vector<Booking>();
+		for(int i=0; i < 7; i++){
+			Vector<Booking> day = new Vector<Booking>();
+			daySchedule.add(day);
 		}
 	}
 
