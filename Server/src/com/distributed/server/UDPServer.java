@@ -65,8 +65,8 @@ public class UDPServer {
 							int day = Integer.parseInt(token);
 							daysToCheck.add(day);
 						}
-						replyMsg = "reqID: " + reqID + "\n" + facID + " requested for " + daysToCheck;
-						System.out.println(services.getAvailability(facID, daysToCheck));
+//						replyMsg = "reqID: " + reqID + "\n" + facID + " requested for " + daysToCheck;
+						replyMsg = services.getAvailability(facID, daysToCheck);
 						requestHistory.put(reqID, replyMsg);
 						//						Services.getAvailability(null,null); //implement
 						break;

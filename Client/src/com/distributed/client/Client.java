@@ -18,6 +18,7 @@ import java.util.Vector;
 public class Client {
 
 	private static final int SO_TIMEOUT = 1000;
+	private static final int SERVER_PORT = 2222;
 	String facName;
 	int service;
 	int UID;
@@ -101,16 +102,17 @@ public class Client {
 			DatagramSocket sock = null;
 			try {
 				sock = new DatagramSocket();
-				InetAddress host = InetAddress.getByName(args[1]);
+				InetAddress host = InetAddress.getByName(args[0]);
 				byte[] m = msg.getBytes(); //Marshalling
-				int serverPort = 6789;
+				int serverPort = SERVER_PORT;
 				DatagramPacket request = new DatagramPacket(m, m.length, host, serverPort);
 				sock.send(request);
 				byte[] buffer = new byte[1000];
 				DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 				
 				sock.setSoTimeout(SO_TIMEOUT);
-				//Retransmit request until reply received
+				// The following section demonstrates how the client will retransmit request until a reply is received.
+				// This is in line with At-least-once and At-most-once invocation semantics.
 				String ans = null;
 				do {
 					try{
