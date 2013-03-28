@@ -83,18 +83,22 @@ public class Client {
 				break;
 
 			case 3:
-				System.out.println("Enter the confirmation ID of your booking and the offset(e.TENNIS1 0400 OR SQ1 -0400): \n");
+				System.out.println("Enter the confirmation ID of your booking and the offset(e.g. 251 0400 OR 1563 -0400): \n");
 				command = br.readLine();
 				reqCtr++;
 				break;
 
 			case 4:
 				System.out.println("Enter the name of facility and the monitor interval as DHH: \n");
-				command = br.readLine();
+				line = br.readLine();
+				tok = new StringTokenizer(line, " ");
+				command = Integer.toString(BookingUtils.getFacID(tok.nextToken()));
+				command = command + " " + tok.nextToken();
 				reqCtr++;
 				break;
 			default:
-				;
+				System.out.println("You Entered an invalid command. Please try again.");
+				continue;
 
 			}
 			String reqID =clientID.toString() + Integer.toString(reqCtr);
