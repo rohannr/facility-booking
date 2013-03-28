@@ -5,13 +5,12 @@
 		private static int idCounter = 0; 
 		private int startSlot;
 		private int endSlot;
-		private int ID;
+		private String ID;
 	
 		public Booking(int fId, int day, int start, int end){
 			this.startSlot = start;
 			this.endSlot = end;
-			String join = "" + fId + day + idCounter;
-			this.ID = Integer.parseInt(join);
+			this.ID = "" + fId + day + idCounter;
 			idCounter++;
 		}
 	
@@ -31,7 +30,7 @@
 			return this.endSlot;
 		}
 	
-		public int getID() {
+		public String getID() {
 			return ID;
 		}
 	

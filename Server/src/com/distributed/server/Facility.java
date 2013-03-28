@@ -34,7 +34,7 @@ public class Facility {
 		Booking booking = new Booking(facId, day, start, end);
 		bookings.add(booking);
 		triggerMonitors();
-		return Integer.toString(booking.getID());
+		return booking.getID();
 	}
 		
 	public Integer[] getAvailability(int day){
@@ -49,12 +49,12 @@ public class Facility {
 		return span;
 	}
 	
-	public String updateBooking(int day, int confID, int slotOffset) throws IOException {
+	public String updateBooking(int day, String confID, int slotOffset) throws IOException {
 		Vector<Booking> bookings = this.daySchedule.get(day);
 		
 		Booking update = null;
 		for(int i=0; i< bookings.size(); i++){
-			if (bookings.get(i).getID() == confID){
+			if (bookings.get(i).getID().equals(confID)){
 				update = bookings.get(i);
 				i = bookings.size();
 			}
@@ -71,7 +71,7 @@ public class Facility {
 		}
 		
 		for (int j=0; j<bookings.size();j++){
-			if (bookings.get(j).getID() != confID){
+			if (!bookings.get(j).getID().equals(confID)){
 				if (bookings.get(j).conflict(newStart, newEnd)){
 					return "Invalid offset provided. Conflict with another booking.";
 				}

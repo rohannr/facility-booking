@@ -51,11 +51,10 @@ public class Services {
 	}
 	
 	
-	public String updateBooking(int confID, String offset) throws IOException{
+	public String updateBooking(String confID, String offset) throws IOException{
 		// does not validate offset
-        String id = Integer.toString(confID);
-		int facID = Integer.parseInt(id.substring(0,1));
-        int day = Integer.parseInt(id.substring(1,2));
+		int facID = Integer.parseInt(confID.substring(0,1));
+        int day = Integer.parseInt(confID.substring(1,2));
         Facility facility = ref.facList.get(facID);
         
         int slotOffset;

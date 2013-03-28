@@ -79,7 +79,7 @@ public class UDPServer {
 						break;
 						
 					case 3:
-						int confID = Integer.parseInt(sc.next());
+						String confID = sc.next();
 						String offset = sc.next();
 						replyMsg = services.updateBooking(confID, offset);
 						break;
