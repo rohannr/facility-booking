@@ -32,6 +32,7 @@ public class Client {
 	public static void main(String[] args) throws NumberFormatException, IOException, ParseException {
 		
 		BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+		boolean block = false;
 		
 		int reqCtr = 0; //Global request counter for client session
 		UUID clientID = UUID.randomUUID(); //Generate Unique ID for User/Session
@@ -94,6 +95,7 @@ public class Client {
 				tok = new StringTokenizer(line, " ");
 				command = Integer.toString(BookingUtils.getFacID(tok.nextToken()));
 				command = command + " " + tok.nextToken();
+				block = true;
 				reqCtr++;
 				break;
 			default:
@@ -114,22 +116,30 @@ public class Client {
 				byte[] buffer = new byte[1000];
 				DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 				
-				sock.setSoTimeout(SO_TIMEOUT);
-				// The following section demonstrates how the client will retransmit request until a reply is received.
-				// This is in line with At-least-once and At-most-once invocation semantics.
-				String ans = null;
-				do {
-					try{
-						sock.receive(reply);
-						ans = new String(reply.getData(), 0, reply.getLength());
-					} catch(SocketTimeoutException e){
-						System.out.println("Client timeout");
-						ans = null;
-						sock.send(request);
-					}
-				} while (ans == null);
 				
-				System.out.println("Reply: " + ans);
+				
+				if(block){
+					sock.receive(reply);
+					System.out.println(new String(reply.getData(), 0, reply.getLength()));
+				} else {
+
+					sock.setSoTimeout(SO_TIMEOUT);
+					// The following section demonstrates how the client will retransmit request until a reply is received.
+					// This is in line with At-least-once and At-most-once invocation semantics.
+					String ans = null;
+					do {
+						try{
+							sock.receive(reply);
+							ans = new String(reply.getData(), 0, reply.getLength());
+						} catch(SocketTimeoutException e){
+							System.out.println("Client timeout");
+							ans = null;
+							sock.send(request);
+						}
+					} while (ans == null);
+
+					System.out.println("Reply: " + ans);
+				}
 				
 			} catch (SocketException e1) {
 				// TODO Auto-generated catch block
