@@ -74,12 +74,10 @@ public class BookingUtils {
     }
     
     public static void notifyClient(String msg, InetAddress IP, int port) throws IOException{
-    	DatagramSocket soc = new DatagramSocket(9877);
     	byte[] dataStream = new byte[2048];
     	dataStream = msg.getBytes();
     	DatagramPacket sendPacket = new DatagramPacket(dataStream, dataStream.length, IP, port);
-        soc.send(sendPacket);
-        soc.close();
+    	UDPServer.sendNotification(sendPacket);
     }
     
 	public static int getFacID(String faculty){

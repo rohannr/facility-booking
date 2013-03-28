@@ -2,6 +2,8 @@ package com.distributed.server;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketAddress;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,6 +17,7 @@ import java.util.Vector;
 
 public class UDPServer {
 
+	private static final int SERVER_PORT_NO = 2222;
 	/**
 	 * @param args
 	 * @throws IOException 
@@ -23,6 +26,7 @@ public class UDPServer {
 
 
 
+	public static DatagramSocket sock = null;
 
 	public static void main(String[] args) throws IOException, ParseException {
 
@@ -31,9 +35,8 @@ public class UDPServer {
 		int facID;
 		Services services = Services.getServices();
 		services.init();
-		DatagramSocket sock = null;
 		try {
-			sock = new DatagramSocket(6789);
+			sock = new DatagramSocket(SERVER_PORT_NO);
 			byte[] buffer = new byte[1000];
 			while(true){
 				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
@@ -65,18 +68,15 @@ public class UDPServer {
 							int day = Integer.parseInt(token);
 							daysToCheck.add(day);
 						}
-//						replyMsg = "reqID: " + reqID + "\n" + facID + " requested for " + daysToCheck;
 						replyMsg = services.getAvailability(facID, daysToCheck);
 						requestHistory.put(reqID, replyMsg);
-						//						Services.getAvailability(null,null); //implement
 						break;
 
 					case 2:
-						int facId = Integer.parseInt(sc.next());
+						facID = Integer.parseInt(sc.next());
 						int dayOfWeek = Integer.parseInt(sc.next());
-						String startTime = sc.next();
-						String endTime = sc.next();
-						replyMsg = services.reserveFacility(facId, dayOfWeek, startTime, endTime); 
+						String[] times = sc.next().split("-"); //split into start and end times
+						replyMsg = services.reserveFacility(facID, dayOfWeek, times[0], times[1]); 
 						break;
 						
 					case 3:
@@ -84,6 +84,14 @@ public class UDPServer {
 						String offset = sc.next();
 						replyMsg = services.updateBooking(confID, offset);
 						break;
+						
+					case 4:
+						facID = Integer.parseInt(sc.next());
+						String interval = sc.next();
+						InetAddress clientIP = request.getAddress();
+						int clientPort = request.getPort();
+						services.monitorFacility(facID, interval, clientIP, clientPort);
+						replyMsg = "The requested facility is now being monitored!";
 					default:
 						;
 					}
@@ -110,6 +118,19 @@ public class UDPServer {
 			}
 		}
 
+	}
+
+	/**
+	 * Called when any new booking or update is made. 
+	 * Used to notify a monitoring client when its interval becomes available
+	 * @param sendPacket - The Datagram packet containing the message that is to be sent
+	 */
+	public static void sendNotification(DatagramPacket sendPacket) {
+			try {
+				sock.send(sendPacket);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
 
 }

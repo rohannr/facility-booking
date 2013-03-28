@@ -75,10 +75,10 @@ public class Client {
 			case 2:
 				System.out.println("Enter name of facility, day and time(for e.g. LT3 Tuesday 1030-1230): \n");
 				line = br.readLine();
-				tok = new StringTokenizer(line, "");
+				tok = new StringTokenizer(line, " ");
 				command = Integer.toString(BookingUtils.getFacID(tok.nextToken())); //facility
-				command = command + BookingUtils.getDay(tok.nextToken()); //day
-				command = command + tok.nextToken("-") + tok.nextToken(); // times
+				command = command + " " + BookingUtils.getDay(tok.nextToken()); //day
+				command = command + " " + tok.nextToken(); // times
 				reqCtr++;
 				break;
 
@@ -89,8 +89,8 @@ public class Client {
 				break;
 
 			case 4:
-				System.out.println("Enter the name of facility and the monitor interval in hours: \n");
-				command = line;
+				System.out.println("Enter the name of facility and the monitor interval as DHH: \n");
+				command = br.readLine();
 				reqCtr++;
 				break;
 			default:
