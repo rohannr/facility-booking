@@ -1,6 +1,7 @@
 package com.distributed.client;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -40,5 +41,22 @@ public class BookingUtils {
 	
 	public static int getFacID(String faculty){
 		return facList.indexOf(faculty.toUpperCase());
+	}
+	
+	public static long expiryTime(String interval){
+		Calendar calendar = Calendar.getInstance();
+		long millis = calendar.getTimeInMillis();
+		
+		long days = 86400000 * Integer.parseInt(interval.substring(0,1));
+		long hours = 3600000 * Integer.parseInt(interval.substring(1,3));
+		
+		long expiry = millis + days + hours;
+		return expiry;
+	}
+	
+	public static boolean hasExpired(long expiry){
+		Calendar calendar = Calendar.getInstance();
+		long today = calendar.getTimeInMillis();
+		return today > expiry;
 	}
 }

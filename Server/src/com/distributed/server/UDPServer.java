@@ -103,7 +103,7 @@ public class UDPServer {
 					DatagramPacket reply = new DatagramPacket(replyPacket, replyPacket.length, request.getAddress(), request.getPort());
 					Random rand = new Random();
 
-					if(rand.nextInt(5) > 2){
+					if(rand.nextInt(5) > 2 ){
 						System.out.println("Reply sent!");
 						sock.send(reply);
 					} else {

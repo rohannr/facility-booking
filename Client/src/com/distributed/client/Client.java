@@ -36,6 +36,8 @@ public class Client {
 		
 		int reqCtr = 0; //Global request counter for client session
 		UUID clientID = UUID.randomUUID(); //Generate Unique ID for User/Session
+		long expiry=0;
+		
 		
 		System.out.println("Welcome to the Facility Booking System!\n");
 		while(true){
@@ -94,7 +96,9 @@ public class Client {
 				line = br.readLine();
 				tok = new StringTokenizer(line, " ");
 				command = Integer.toString(BookingUtils.getFacID(tok.nextToken()));
-				command = command + " " + tok.nextToken();
+				String interval = tok.nextToken();
+				expiry = BookingUtils.expiryTime(interval);
+				command = command + " " + interval;
 				block = true;
 				reqCtr++;
 				break;
@@ -117,28 +121,25 @@ public class Client {
 				DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 				
 				
-				
 				if(block){
-					sock.receive(reply);
-					System.out.println(new String(reply.getData(), 0, reply.getLength()));
+					int t = 0;
+					System.out.println(retransmitUDPMessage(request, reply, sock));
+					while(!BookingUtils.hasExpired(expiry)){
+						
+						do{
+							try {
+								sock.receive(reply);
+								t=1;
+							} catch(SocketTimeoutException e1){
+								;
+							}
+						} while(t == 0);
+						System.out.println(new String(reply.getData(), 0, reply.getLength()));
+						t=0;
+					}
 				} else {
-
-					sock.setSoTimeout(SO_TIMEOUT);
-					// The following section demonstrates how the client will retransmit request until a reply is received.
-					// This is in line with At-least-once and At-most-once invocation semantics.
-					String ans = null;
-					do {
-						try{
-							sock.receive(reply);
-							ans = new String(reply.getData(), 0, reply.getLength());
-						} catch(SocketTimeoutException e){
-							System.out.println("Client timeout");
-							ans = null;
-							sock.send(request);
-						}
-					} while (ans == null);
-
-					System.out.println("Reply: " + ans);
+					String res = retransmitUDPMessage(request, reply, sock);
+					System.out.println("Reply: " + res);
 				}
 				
 			} catch (SocketException e1) {
@@ -155,6 +156,35 @@ public class Client {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Retransmits request until reply is received from server.
+	 * Demonstrates At-Least-Once and At-Most-Once Semantics
+	 * @param request
+	 * @param reply
+	 * @return
+	 * @throws IOException 
+	 */
+	private static String retransmitUDPMessage(DatagramPacket request,
+			DatagramPacket reply, DatagramSocket sock) throws IOException {
+		sock.setSoTimeout(SO_TIMEOUT);
+		// The following section demonstrates how the client will retransmit request until a reply is received.
+		// This is in line with At-least-once and At-most-once invocation semantics.
+		String ans = null;
+		do {
+			try{
+				sock.receive(reply);
+				ans = new String(reply.getData(), 0, reply.getLength());
+			} catch(SocketTimeoutException e){
+				System.out.println("Client timeout");
+				ans = null;
+				sock.send(request);
+			}
+		} while (ans == null);
+		
+		return ans;
+		
 	}
 
 }
