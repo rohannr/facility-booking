@@ -50,6 +50,26 @@ public class Services {
 		facility.monitor(interval, IP, port);
 	}
 	
+	public String cancelBooking(String confID) throws IOException{
+		int facID = Integer.parseInt(confID.substring(0,1));
+        int day = Integer.parseInt(confID.substring(1,2));
+        Facility facility = ref.facList.get(facID);
+        return facility.cancelBooking(day, confID);
+	}
+	
+	public String shiftBookingDate(String confID, String dayOffset) throws IOException{
+		int facID = Integer.parseInt(confID.substring(0,1));
+        int day = Integer.parseInt(confID.substring(1,2));
+        Facility facility = ref.facList.get(facID);
+        
+        int offset;
+        if (dayOffset.length() == 1){
+        	offset = Integer.parseInt(dayOffset);
+        } else {
+        	offset = -1 * Integer.parseInt(dayOffset.substring(1,2));
+        }
+        return facility.shiftBookingDate(day, facID, confID, offset);
+	}
 	
 	public String updateBooking(String confID, String offset) throws IOException{
 		// does not validate offset
@@ -68,8 +88,8 @@ public class Services {
         return facility.updateBooking(day, confID, slotOffset);
 	}   
 	
-	
-	public int getSlot(String hhmm) {		
+	public int getSlot(String hhmm) {
+		//converts from human time to system time 
 		String hh = hhmm.substring(0, 2);
 		int hr = Integer.parseInt(hh);
 		

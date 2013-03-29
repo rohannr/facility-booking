@@ -36,17 +36,17 @@ public class Facility {
 		triggerMonitors();
 		return booking.getID();
 	}
+
+	public void monitor(String interval, InetAddress IP, int port) {
+		Calendar calendar = Calendar.getInstance();
+		long millis = calendar.getTimeInMillis();
 		
-	public Integer[] getAvailability(int day){
-		Vector<Booking> bookings = this.daySchedule.get(day);
-		Vector<Integer> slots = new Vector<Integer>();
-		for(int i=0; i< bookings.size(); i++){
-			slots.add(bookings.get(i).getStartSlot());
-			slots.add(bookings.get(i).getEndSlot());
-		}
-		Integer[] span = (Integer[]) slots.toArray(new Integer[0]);
-		Arrays.sort(span);
-		return span;
+		long days = 86400000 * Integer.parseInt(interval.substring(0,1));
+		long hours = 3600000 * Integer.parseInt(interval.substring(1,3));
+		
+		long expiry = millis + days + hours;
+		
+		this.monitors.add(new Monitor(expiry, IP, port));
 	}
 	
 	public String updateBooking(int day, String confID, int slotOffset) throws IOException {
@@ -83,6 +83,75 @@ public class Facility {
 		update.setEndSlot(newEnd);
 		triggerMonitors();
 		return "Booking " + confID + " updated to " + slotToTime(newStart) + "-" + slotToTime(newEnd);		
+	}
+	
+	public String shiftBookingDate(int day, int facId, String confID, int dayOffset) {
+		
+		int today = BookingUtils.getToday();
+		int newDay = day + dayOffset;
+		//check offset validity
+		if (newDay < today){
+			return "Unsuccessful! You cannot move your booking to a day that has already passed";
+		} else if (newDay > 6){
+			return "Unsuccessful! You can only book a day in the current week";
+		}
+		
+		//check slots availability
+		Vector<Booking> bookings = this.daySchedule.get(day);
+		Iterator<Booking> itr = bookings.iterator();
+		while(itr.hasNext()){
+			Booking b = itr.next();			
+			if (b.getID().equals(confID)){
+				int bookingStart = b.getStartSlot();
+				int bookingEnd = b.getEndSlot();
+				
+				//error if new day conflicts
+				Vector<Booking> newDayBookings = this.daySchedule.get(newDay);
+				for(int i=0; i< newDayBookings.size(); i++){
+					if (newDayBookings.get(i).conflict(bookingStart, bookingEnd)) {
+						return "Unsuccessful! Time conflict with: Booking #" +
+								newDayBookings.get(i).getID() + " " + 
+								slotToTime(newDayBookings.get(i).getStartSlot()) + " " + 
+								slotToTime(newDayBookings.get(i).getEndSlot());
+					}
+			    }
+				
+				//update bookings
+				Booking booking = new Booking(facId, newDay, bookingStart, bookingEnd);
+				newDayBookings.add(booking);
+				itr.remove();				
+				triggerMonitors();
+				return booking.getID();				
+			}
+		}
+		return "Unsuccessful! Invalid booking ID provided."
+	}
+	
+	public String cancelBooking(int day, String confID) throws IOException {
+		Vector<Booking> bookings = this.daySchedule.get(day);
+		Iterator<Booking> itr = bookings.iterator();
+		while(itr.hasNext()){
+			Booking b = itr.next();			
+			if (b.getID().equals(confID)){
+				itr.remove();
+				triggerMonitors();
+				return "Booking removed successfully; Booking #" +
+				b.getID() + " " + slotToTime(b.getStartSlot()) + " " + slotToTime(b.getEndSlot());
+			}
+		}
+		return "Operation failed; no such ID exists";
+	}
+	
+	public Integer[] getAvailability(int day){
+		Vector<Booking> bookings = this.daySchedule.get(day);
+		Vector<Integer> slots = new Vector<Integer>();
+		for(int i=0; i< bookings.size(); i++){
+			slots.add(bookings.get(i).getStartSlot());
+			slots.add(bookings.get(i).getEndSlot());
+		}
+		Integer[] span = (Integer[]) slots.toArray(new Integer[0]);
+		Arrays.sort(span);
+		return span;
 	}
 
 	public String parseAvailability(Vector<Integer> days) {
@@ -126,18 +195,6 @@ public class Facility {
 			return String.format("%02d", hh) + "30";
 		}
 	}
-
-	public void monitor(String interval, InetAddress IP, int port) {
-		Calendar calendar = Calendar.getInstance();
-		long millis = calendar.getTimeInMillis();
-		
-		long days = 86400000 * Integer.parseInt(interval.substring(0,1));
-		long hours = 3600000 * Integer.parseInt(interval.substring(1,3));
-		
-		long expiry = millis + days + hours;
-				
-		this.monitors.add(new Monitor(expiry, IP, port));
-	}
 	
 	public void triggerMonitors() throws IOException{
 		int today = BookingUtils.getToday();
@@ -157,7 +214,5 @@ public class Facility {
 			}
 		}
 	}
-
-
 
 }
