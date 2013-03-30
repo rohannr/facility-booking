@@ -7,7 +7,7 @@ import java.util.*;
 public class Facility {
 
 	private String name;
-	private Vector<Vector<Booking>> daySchedule;
+	private Vector<Vector<Booking>> daySchedule; //bookings for this facility, grouped by day
 	private Vector<Monitor> monitors = new Vector<Monitor>();
 
 	public Facility(String name) {
@@ -25,12 +25,14 @@ public class Facility {
 
 	public String book(int facId, int day, int start, int end) throws IOException {
 		Vector<Booking> bookings = this.daySchedule.get(day);
+		//check for conflicts
 		for(int i=0; i< bookings.size(); i++){
 			if (bookings.get(i).conflict(start, end)) {
 				return "Booking unsuccessful due to time conflict with: Booking #" +
 						bookings.get(i).getID() + " " + slotToTime(bookings.get(i).getStartSlot()) + " " + slotToTime(bookings.get(i).getEndSlot());
 			}
-	    }
+	    }		
+		//complete booking process
 		Booking booking = new Booking(facId, day, start, end);
 		bookings.add(booking);
 		triggerMonitors();
@@ -38,6 +40,7 @@ public class Facility {
 	}
 
 	public void monitor(String interval, InetAddress IP, int port) {
+		//creates a monitor for this facility
 		Calendar calendar = Calendar.getInstance();
 		long millis = calendar.getTimeInMillis();
 		
@@ -52,17 +55,19 @@ public class Facility {
 	public String updateBooking(int day, String confID, int slotOffset) throws IOException {
 		Vector<Booking> bookings = this.daySchedule.get(day);
 		
+		//retrieve specified booking
 		Booking update = null;
 		for(int i=0; i< bookings.size(); i++){
 			if (bookings.get(i).getID().equals(confID)){
 				update = bookings.get(i);
 				i = bookings.size();
 			}
-		}
-		
+		}		
 		if (update == null){
 			return "Invalid booking ID provided.";
 		}
+		
+		//validate offset 
 		int newStart = slotOffset + update.getStartSlot();
 		int newEnd = slotOffset + update.getEndSlot();
 		
@@ -85,7 +90,7 @@ public class Facility {
 		return "Booking " + confID + " updated to " + slotToTime(newStart) + "-" + slotToTime(newEnd);		
 	}
 	
-	public String shiftBookingDate(int day, int facId, String confID, int dayOffset) {
+	public String shiftBookingDate(int day, int facId, String confID, int dayOffset) throws IOException {
 		
 		int today = BookingUtils.getToday();
 		int newDay = day + dayOffset;
@@ -124,7 +129,7 @@ public class Facility {
 				return booking.getID();				
 			}
 		}
-		return "Unsuccessful! Invalid booking ID provided."
+		return "Unsuccessful! Invalid booking ID provided.";
 	}
 	
 	public String cancelBooking(int day, String confID) throws IOException {
@@ -143,6 +148,7 @@ public class Facility {
 	}
 	
 	public Integer[] getAvailability(int day){
+		//returns list of slots in order for parseAvailability for 
 		Vector<Booking> bookings = this.daySchedule.get(day);
 		Vector<Integer> slots = new Vector<Integer>();
 		for(int i=0; i< bookings.size(); i++){
@@ -155,6 +161,7 @@ public class Facility {
 	}
 
 	public String parseAvailability(Vector<Integer> days) {
+		//returns facility availability 
 		String result = "Facility avilability for " + this.name + ":\n";
 		
 		for (int i=0; i<days.size(); i++){
@@ -171,7 +178,7 @@ public class Facility {
 					 if (span[j] != tail) {
 						 result += slotToTime(tail) + "-" + slotToTime(span[j]) + " "; 
 					 }
-					 tail = span[j+1]; //valid cuz they should come in pairs
+					 tail = span[j+1]; //valid because they come in pairs
 				 }
 				 if (tail < 47) {
 					 result += slotToTime(tail) + "-" + slotToTime(47) + " "; 
@@ -188,6 +195,7 @@ public class Facility {
 	}
 
 	private String slotToTime(Integer slot) {
+		//converts internal time to human readable time
 		int hh = slot / 2;
 		if ( (slot % 2) == 0) { //even
 			return String.format("%02d", hh) + "00";
@@ -197,6 +205,7 @@ public class Facility {
 	}
 	
 	public void triggerMonitors() throws IOException{
+		//informs monitor of facility booking change
 		int today = BookingUtils.getToday();
 		Vector<Integer> days = new Vector<Integer>();
 		for (int i=today;i<7;i++){
