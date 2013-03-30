@@ -46,6 +46,8 @@ public class Client {
 					"[2] Book Facility\n" +
 					"[3] Change Booking\n" +
 					"[4] Monitor Facility Availability\n" +
+					"[5] Cancel Booking\n" +
+					"[6] Change duration of booking\n" +
 					"[0] Exit\n" +
 					"Please enter the corresponding number:");
 
@@ -102,8 +104,18 @@ public class Client {
 				block = true;
 				reqCtr++;
 				break;
+				
+			case 5:
+				System.out.println("Enter the confirmation ID of the booking to be cancelled: \n");
+				command = br.readLine();
+				reqCtr++;
+				break;
+			case 6:
+				System.out.println("Enter the confirmation ID and the change in duration in HH(for e.g. 25132 200 to increase the booking duration by 2hrs");
+				reqCtr++;
+				break;
 			default:
-				System.out.println("You Entered an invalid command. Please try again.");
+				System.out.println("You entered an invalid command. Please try again.");
 				continue;
 
 			}

@@ -33,6 +33,7 @@ public class UDPServer {
 		boolean atMostOnce = args[0].equalsIgnoreCase("atm") ? true : false;  //At most once Invocation semantics activated
 		HashMap<String, String> requestHistory = new HashMap<String, String>(); //Table of Request IDs and their corresponding replies.
 		int facID;
+		String confID;
 		Services services = Services.getServices();
 		services.init();
 		try {
@@ -79,7 +80,7 @@ public class UDPServer {
 						break;
 						
 					case 3:
-						String confID = sc.next();
+						confID = sc.next();
 						String offset = sc.next();
 						replyMsg = services.updateBooking(confID, offset);
 						break;
@@ -91,6 +92,18 @@ public class UDPServer {
 						int clientPort = request.getPort();
 						services.monitorFacility(facID, interval, clientIP, clientPort);
 						replyMsg = "The requested facility is now being monitored!";
+						break;
+						
+					case 5:
+						confID = sc.next();
+						replyMsg = services.cancelBooking(confID);
+						break;
+						
+					case 6:
+						confID = sc.next();
+						String durationChange = sc.next();
+						replyMsg = services.changeBookingInterval(confID, durationChange);
+						break;
 					default:
 						;
 					}
