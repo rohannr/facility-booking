@@ -100,19 +100,4 @@ public class Services {
 		}
 	}
 
-	public String cancelBooking(String bookID) {
-		return null;
-	}
-
-	/**
-	 * Increase or decrease the booking interval for an existing reservation. 
-	 * Note: the endtime of the booking interval is moved accordingly. Start time remains the same
-	 * @param confID - booking to be modified
-	 * @param durationChange - positive or negative value in terms of [+-]HH 
-	 * @return String notification of success, or failure in case of conflict
-	 */
-	public String changeBookingInterval(String confID, String durationChange) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

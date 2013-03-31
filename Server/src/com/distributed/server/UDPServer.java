@@ -101,8 +101,8 @@ public class UDPServer {
 						
 					case 6:
 						confID = sc.next();
-						String durationChange = sc.next();
-						replyMsg = services.changeBookingInterval(confID, durationChange);
+						String dayOffset = sc.next();
+						replyMsg = services.shiftBookingDate(confID, dayOffset);
 						break;
 					default:
 						;

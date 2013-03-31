@@ -47,7 +47,7 @@ public class Client {
 					"[3] Change Booking\n" +
 					"[4] Monitor Facility Availability\n" +
 					"[5] Cancel Booking\n" +
-					"[6] Change duration of booking\n" +
+					"[6] Change day of Booking\n" +
 					"[0] Exit\n" +
 					"Please enter the corresponding number:");
 
@@ -111,7 +111,7 @@ public class Client {
 				reqCtr++;
 				break;
 			case 6:
-				System.out.println("Enter the confirmation ID and the change in duration in HH(for e.g. 25132 200 to increase the booking duration by 2hrs");
+				System.out.println("Enter the confirmation ID and the day offset: \n");
 				reqCtr++;
 				break;
 			default:
