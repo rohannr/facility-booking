@@ -10,7 +10,7 @@ import java.util.List;
 
 public class BookingUtils {
 
-	private static final String[] facilityNames= new String[]{ "LT1", "LT2", "LT3", "LT3", "LT4", "LT5", "LT6", "LT7", "LT8", "LT8", "LT9", "LT10", "TR1", "TR2", "TR3", "TR4", "TR5", "SQ1", "SQ2", "TENNIS1", "TENNIS2", "TENNIS3" };
+	private static final String[] facilityNames= new String[]{ "LT1", "LT2", "LT3", "LT4", "TR1", "SQ1", "SQ2", "TENNIS1"};
 
 	private static final List<String> facList = Arrays.asList(facilityNames);
 	
