@@ -17,7 +17,7 @@ import java.util.Vector;
 
 public class UDPServer {
 
-	private static final int SERVER_PORT_NO = 6789;
+	private static final int SERVER_PORT_NO = 2222;
 	/**
 	 * @param args
 	 * @throws IOException 

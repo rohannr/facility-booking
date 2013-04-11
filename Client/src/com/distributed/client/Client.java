@@ -18,7 +18,7 @@ import java.util.Vector;
 public class Client {
 
 	private static final int SO_TIMEOUT = 1000;
-	private static final int SERVER_PORT = 6789;
+	private static final int SERVER_PORT = 2222;
 	String facName;
 	int service;
 	int UID;
